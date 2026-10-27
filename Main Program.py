@@ -2,7 +2,7 @@ import csv
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
-FILE_PATH = "/home/ciaran/Downloads/Contact Book/Contacts.csv"
+FILE_PATH = "Contacts.csv"
 
 def readfile():
 
@@ -14,7 +14,6 @@ def readfile():
         Number = []
         Forename = []
         Surname = []
-        data = []
 
         # Iterating over each row
         for row in reader:
@@ -22,10 +21,7 @@ def readfile():
             Forename.append(row['Forename'])
             Surname.append(row['Surname'])
 
-            for value in Number:
-                data.append(row)
-
-    return Number,Forename,Surname, data
+    return Number,Forename,Surname
 
 def addcontact(Number,Forename,Surname):
 
@@ -45,6 +41,7 @@ def addcontact(Number,Forename,Surname):
 
             Number.append(NewNum)
 
+
         NewForename = input(print("Enter the new Forename: "))
         Forename.append(NewForename)
 
@@ -54,15 +51,28 @@ def addcontact(Number,Forename,Surname):
 
     return Number,Forename,Surname
 
-def updateFile(data):
+def updateFile(Number,Forename,Surname):
 
-    with open('university_records.csv', 'w', newline='') as csvfile:
+    Data = []
+    pos = 0
 
-        fieldnames = ['name', 'branch', 'year']
+    for value in Number:
 
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(data)
+        Data.append(Number[pos])
+        Data.append(Forename[pos])
+        Data.append(Surname[pos])
+
+        pos += 1 
+
+        # Could maybe just print the 3 seperate lists instead of this bullshit?
+        #  Even if its three seperate file openings for the moment becuase the code above is hopeless.
+        #  Or something could be down with the write rows command below preferably. PRAY
+
+    with open('my_file.csv', 'w') as f:
+        writer = csv.writer(f)
+
+        writer.writerow(["Number","Forename","Surname"])
+        writer.writerows(Data)  # Write all of your rows to the file in one go.
 
 def displaylist(Number,Forename,Surname):
 
@@ -77,9 +87,10 @@ def displaylist(Number,Forename,Surname):
 
         pos += 1
 
-#---- Main System
 
-Number, Forename, Surname, data = readfile() 
+#---- Main System ----#
+
+Number, Forename, Surname = readfile() 
 
 Con = True
 
@@ -90,7 +101,7 @@ while Con == True:
     if Dec == "Add Contact":
 
         Number, Forename, Surname = addcontact(Number, Forename, Surname) 
-        updateFile(data) 
+        updateFile(Number, Forename, Surname) 
 
     elif Dec == "Display":
 
