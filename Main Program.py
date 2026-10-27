@@ -14,6 +14,7 @@ def readfile():
         Number = []
         Forename = []
         Surname = []
+        data = []
 
         # Iterating over each row
         for row in reader:
@@ -21,7 +22,10 @@ def readfile():
             Forename.append(row['Forename'])
             Surname.append(row['Surname'])
 
-    return Number,Forename,Surname
+            for value in Number:
+                data.append(row)
+
+    return Number,Forename,Surname, data
 
 def addcontact(Number,Forename,Surname):
 
@@ -41,7 +45,6 @@ def addcontact(Number,Forename,Surname):
 
             Number.append(NewNum)
 
-
         NewForename = input(print("Enter the new Forename: "))
         Forename.append(NewForename)
 
@@ -51,14 +54,15 @@ def addcontact(Number,Forename,Surname):
 
     return Number,Forename,Surname
 
-def updateFile(Number,Forename,Surname):
+def updateFile(data):
 
-    with open(FILE_PATH, 'w', newline='') as file:
-        
-        fieldnames = ['Number', 'Forename', 'Surname']
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
+    with open('university_records.csv', 'w', newline='') as csvfile:
+
+        fieldnames = ['name', 'branch', 'year']
+
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
-        writer.writerows(Number,Forename,Surname)
+        writer.writerows(data)
 
 def displaylist(Number,Forename,Surname):
 
@@ -75,7 +79,7 @@ def displaylist(Number,Forename,Surname):
 
 #---- Main System
 
-Number, Forename, Surname = readfile() 
+Number, Forename, Surname, data = readfile() 
 
 Con = True
 
@@ -86,7 +90,7 @@ while Con == True:
     if Dec == "Add Contact":
 
         Number, Forename, Surname = addcontact(Number, Forename, Surname) 
-        updateFile(Number, Forename, Surname) 
+        updateFile(data) 
 
     elif Dec == "Display":
 
