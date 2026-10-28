@@ -6,6 +6,8 @@ FILE_PATH = "Contacts.csv"
 
 def readfile():
 
+    import pandas as pd
+
     # Open the CSV file
     with open(FILE_PATH, mode='r') as file:
         reader = csv.DictReader(file)
@@ -22,13 +24,20 @@ def readfile():
             Surname.append(row['Surname'])
         file.close()
 
-    return Number,Forename,Surname
+        # Collecting data for the file update using pandas
+        update_data = pd.read_csv('Contacts.csv')
 
-def addcontact(Number,Forename,Surname):
+    return Number,Forename,Surname, update_data
+    
+
+def addcontact(Number,Forename,Surname,update_data):
+
+    import pandas as pd
 
     NewNum = ""
     NewForename = ""
     NewSurname = ""
+    NewRow = []
 
     while len(NewNum) < 13:
 
@@ -42,43 +51,24 @@ def addcontact(Number,Forename,Surname):
 
             Number.append(NewNum)
 
-
         NewForename = input(print("Enter the new Forename: "))
         Forename.append(NewForename)
 
         NewSurname = input(print("Enter the new Surname: "))
         Surname.append(NewSurname)
 
+    return Number,Forename,Surname, update_data
 
-    return Number,Forename,Surname
+def updateFile(update_data):
 
-def updateFile(Number,Forename,Surname):
+    import pandas
 
-        # Could maybe just print the 3 seperate lists instead of this bullshit?
-        #  Even if its three seperate file openings for the moment becuase the code above is hopeless.
-        #  Or something could be down with the write rows command below preferably. PRAY
+    header = ["Number","Forename","Surname"]
 
-    with open("my_file.csv", 'w', newline ='') as output:
+    row_data = update_data
 
-        i = 0
-
-        row_count = len(Number)
-
-        wr = csv.writer(output)
-
-        wr.writerow(["Number","Forename","Surname"])
-
-        for value in Number:
-
-            for row in range1,(row_count + 1):
-
-                wr.writerow([Number[i][row-1]])  # Write all of your rows to the file in one go.
-                wr.writerow([Forename[i]])  # Write all of your rows to the file in one go.
-                wr.writerow([Surname[i]])  # Write all of your rows to the file in one go.
-
-            i += 1
-
-        output.close()
+    data = pandas.DataFrame(row_data, columns= header)
+    data.to_csv('my_file.csv', index = False)
 
 def displaylist(Number,Forename,Surname):
 
@@ -96,7 +86,7 @@ def displaylist(Number,Forename,Surname):
 
 #---- Main System ----#
 
-Number, Forename, Surname = readfile() 
+Number, Forename, Surname, update_data = readfile() 
 
 Con = True
 
@@ -106,8 +96,8 @@ while Con == True:
 
     if Dec == "Add Contact":
 
-        Number, Forename, Surname = addcontact(Number, Forename, Surname) 
-        updateFile(Number, Forename, Surname) 
+        Number, Forename, Surname = addcontact(Number, Forename, Surname, update_data) 
+        updateFile(update_data) 
 
     elif Dec == "Display":
 
