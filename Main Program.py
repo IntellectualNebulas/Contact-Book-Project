@@ -20,6 +20,7 @@ def readfile():
             Number.append(row['Number'])
             Forename.append(row['Forename'])
             Surname.append(row['Surname'])
+        file.close()
 
     return Number,Forename,Surname
 
@@ -53,26 +54,31 @@ def addcontact(Number,Forename,Surname):
 
 def updateFile(Number,Forename,Surname):
 
-    Data = []
-    pos = 0
-
-    for value in Number:
-
-        Data.append(Number[pos])
-        Data.append(Forename[pos])
-        Data.append(Surname[pos])
-
-        pos += 1 
-
         # Could maybe just print the 3 seperate lists instead of this bullshit?
         #  Even if its three seperate file openings for the moment becuase the code above is hopeless.
         #  Or something could be down with the write rows command below preferably. PRAY
 
-    with open('my_file.csv', 'w') as f:
-        writer = csv.writer(f)
+    with open("my_file.csv", 'w', newline ='') as output:
 
-        writer.writerow(["Number","Forename","Surname"])
-        writer.writerows(Data)  # Write all of your rows to the file in one go.
+        i = 0
+
+        row_count = len(Number)
+
+        wr = csv.writer(output)
+
+        wr.writerow(["Number","Forename","Surname"])
+
+        for value in Number:
+
+            for row in range1,(row_count + 1):
+
+                wr.writerow([Number[i][row-1]])  # Write all of your rows to the file in one go.
+                wr.writerow([Forename[i]])  # Write all of your rows to the file in one go.
+                wr.writerow([Surname[i]])  # Write all of your rows to the file in one go.
+
+            i += 1
+
+        output.close()
 
 def displaylist(Number,Forename,Surname):
 
