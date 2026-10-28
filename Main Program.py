@@ -28,16 +28,13 @@ def readfile():
         update_data = pd.read_csv('Contacts.csv')
 
     return Number,Forename,Surname, update_data
-    
 
 def addcontact(Number,Forename,Surname,update_data):
 
-    import pandas as pd
+    import pandas
 
+    NewData = []
     NewNum = ""
-    NewForename = ""
-    NewSurname = ""
-    NewRow = []
 
     while len(NewNum) < 13:
 
@@ -49,13 +46,41 @@ def addcontact(Number,Forename,Surname,update_data):
 
         else:
 
-            Number.append(NewNum)
+            NewData.append(NewNum)
 
         NewForename = input(print("Enter the new Forename: "))
-        Forename.append(NewForename)
+        NewData.append(NewForename)
 
         NewSurname = input(print("Enter the new Surname: "))
-        Surname.append(NewSurname)
+        NewData.append(NewSurname)
+
+        header_transfer = ["Number","Forename","Surname"]
+
+        row_data_transfer = update_data
+
+        data_transfer = pandas.DataFrame(row_data_transfer, columns= header_transfer)
+        data_transfer.to_csv('DataTransfer.csv', index = False)
+        
+        import pandas as pd
+
+        data1 = {
+            "Number": [NewNum],
+            "Forename": [NewForename],
+            "Surname": [NewSurname]
+        }
+
+        dt1 = pd.DataFrame(data1)
+
+        NewData = update_data.append(dt1)
+
+        header = ["Number","Forename","Surname"]
+
+        row_data = NewData
+
+        data = pandas.DataFrame(row_data_transfer, columns= header)
+        data.to_csv('my_file.csv', index = False)
+
+        update_data = NewData
 
     return Number,Forename,Surname, update_data
 
@@ -96,7 +121,7 @@ while Con == True:
 
     if Dec == "Add Contact":
 
-        Number, Forename, Surname = addcontact(Number, Forename, Surname, update_data) 
+        Number, Forename, Surname, update_data = addcontact(Number, Forename, Surname, update_data) 
         updateFile(update_data) 
 
     elif Dec == "Display":
