@@ -9,7 +9,7 @@ DEPENDENCIES
 
 ## HOW TO SET UP (Linux bash)
 
-**Get the program file path@@ :
+**Get the program file path** :
 
 ```
 cd [path to the root folder]
