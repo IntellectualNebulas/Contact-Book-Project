@@ -8,6 +8,12 @@ Pandas
 
 ## How to run
 
+**Get the File Path**:
+
+```
+cd [The file path]
+```
+
 **Create a Virtual Environment**:
 
 ```
