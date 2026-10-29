@@ -9,13 +9,13 @@ DEPENDENCIES
 
 ## HOW TO SET UP (Linux bash)
 
-**Get the program file path :
+**Get the program file path@@ :
 
 ```
 cd [path to the root folder]
 ```
 
-**Create a virtual environment**
+**Create a Virtual Environment**
 
 ```
 python3 -m venv [venv name]
