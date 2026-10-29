@@ -2,9 +2,11 @@ import csv
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
-FILE_PATH = "/home/ciaran/Downloads/Contact Book/Contacts.csv"
+FILE_PATH = "Contacts.csv"
 
 def readfile():
+
+    import pandas as pd
 
     # Open the CSV file
     with open(FILE_PATH, mode='r') as file:
@@ -14,24 +16,25 @@ def readfile():
         Number = []
         Forename = []
         Surname = []
-        data = []
 
         # Iterating over each row
         for row in reader:
             Number.append(row['Number'])
             Forename.append(row['Forename'])
             Surname.append(row['Surname'])
+        file.close()
 
-            for value in Number:
-                data.append(row)
+        # Collecting data for the file update using pandas
+        update_data = pd.read_csv('Contacts.csv')
 
-    return Number,Forename,Surname, data
+    return Number,Forename,Surname, update_data
 
-def addcontact(Number,Forename,Surname):
+def addcontact(Number,Forename,Surname,update_data):
 
+    import pandas
+
+    NewData = []
     NewNum = ""
-    NewForename = ""
-    NewSurname = ""
 
     while len(NewNum) < 13:
 
@@ -43,26 +46,54 @@ def addcontact(Number,Forename,Surname):
 
         else:
 
-            Number.append(NewNum)
+            NewData.append(NewNum)
 
         NewForename = input(print("Enter the new Forename: "))
-        Forename.append(NewForename)
+        NewData.append(NewForename)
 
         NewSurname = input(print("Enter the new Surname: "))
-        Surname.append(NewSurname)
+        NewData.append(NewSurname)
 
+        header_transfer = ["Number","Forename","Surname"]
 
-    return Number,Forename,Surname
+        row_data_transfer = update_data
 
-def updateFile(data):
+        data_transfer = pandas.DataFrame(row_data_transfer, columns= header_transfer)
+        data_transfer.to_csv('DataTransfer.csv', index = False)
+        
+        import pandas as pd
 
-    with open('university_records.csv', 'w', newline='') as csvfile:
+        data1 = {
+            "Number": [NewNum],
+            "Forename": [NewForename],
+            "Surname": [NewSurname]
+        }
 
-        fieldnames = ['name', 'branch', 'year']
+        dt1 = pd.DataFrame(data1)
 
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(data)
+        NewData = update_data.append(dt1)
+
+        header = ["Number","Forename","Surname"]
+
+        row_data = NewData
+
+        data = pandas.DataFrame(row_data_transfer, columns= header)
+        data.to_csv('my_file.csv', index = False)
+
+        update_data = NewData
+
+    return Number,Forename,Surname, update_data
+
+def updateFile(update_data):
+
+    import pandas
+
+    header = ["Number","Forename","Surname"]
+
+    row_data = update_data
+
+    data = pandas.DataFrame(row_data, columns= header)
+    data.to_csv('my_file.csv', index = False)
 
 def displaylist(Number,Forename,Surname):
 
@@ -77,9 +108,10 @@ def displaylist(Number,Forename,Surname):
 
         pos += 1
 
-#---- Main System
 
-Number, Forename, Surname, data = readfile() 
+#---- Main System ----#
+
+Number, Forename, Surname, update_data = readfile() 
 
 Con = True
 
@@ -89,8 +121,8 @@ while Con == True:
 
     if Dec == "Add Contact":
 
-        Number, Forename, Surname = addcontact(Number, Forename, Surname) 
-        updateFile(data) 
+        Number, Forename, Surname, update_data = addcontact(Number, Forename, Surname, update_data) 
+        updateFile(update_data) 
 
     elif Dec == "Display":
 
