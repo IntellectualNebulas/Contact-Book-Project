@@ -20,3 +20,24 @@ Step 4: source [venv name]/bin/activate
 Step 5: pip install pandas
 
 DISCLAIMER: The program will NOT work without Pandas!!!
+
+## How to run
+
+**Terminal prototype** (nothing to install):
+
+```
+python3 studypilot.py
+```
+
+**Run the tests:**
+
+```
+python3 test_studypilot.py
+```
+
+**Flask website** (once built):
+
+```
+pip install flask
+flask --app app run
+```
