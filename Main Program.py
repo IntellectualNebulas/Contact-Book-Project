@@ -1,10 +1,27 @@
-import csv
-from pathlib import Path
+import csv # Used so the CSV File functions work
+from pathlib import Path # Used for file path
 
+# Directory for the main file
 BASE_DIR = Path(__file__).resolve().parent
-FILE_PATH = "Contacts.csv"
+FILE_PATH = "File/Contacts.csv"
+
+def inputvalidation():
+
+    "All the lists used for input validation"
+
+    "Lists used for 'Con'"
+    acc_val_foryes = ["yes","y","yeah","yea"]
+    acc_val_forno = ["no","n","nope","nah"]
+
+    "Lists used for 'Awn'"
+    acc_val_addcon = ["add contact","add","a"]
+    acc_val_dis = ["display","d"]
+
+    return acc_val_foryes, acc_val_forno, acc_val_addcon, acc_val_dis
 
 def readfile():
+
+    "Reads in the 'Contacts.csv' file"
 
     import pandas as pd
 
@@ -25,116 +42,114 @@ def readfile():
         file.close()
 
         # Collecting data for the file update using pandas
-        update_data = pd.read_csv('Contacts.csv')
+        read_data = pd.read_csv('File/Contacts.csv')
 
-    return Number,Forename,Surname, update_data
+    return Number,Forename,Surname, read_data
 
-def addcontact(Number,Forename,Surname,update_data):
+def addcontact(Number,Forename,Surname,read_data):
+
+    "Adds a new value to the end of the data frame that then later gets printed to the 'Contacts.csv' file"
+
+    "LISTS CODE"
 
     import pandas
 
-    NewData = []
+    # Local Variable so the Len command works immediately
     NewNum = ""
 
-    while len(NewNum) < 13:
+    # Validates the length of the phone number
+    while len(NewNum) != 11:
 
-        NewNum = input(print("Enter the phone number: "))
+        NewNum = input("Enter the phone number: ")
 
-        if len(NewNum) < 13:
+        if len(NewNum) != 11:
                     
-            NewNum = input(print("Re-Enter a valid phone number: "))
+            NewNum = input("Re-Enter a valid phone number: ")
 
-        else:
+        else: # Only if the phone number is not 13 characters long (INCLUDING SPACES)
 
-            NewData.append(NewNum)
+            break
 
-        NewForename = input(print("Enter the new Forename: "))
-        NewData.append(NewForename)
+    # Getting the new forename to be added
+    NewForename = input("Enter the new Forename: ")
 
-        NewSurname = input(print("Enter the new Surname: "))
-        NewData.append(NewSurname)
+    # Getting the new surname to be added 
+    NewSurname = input("Enter the new Surname: ")
 
-        header_transfer = ["Number","Forename","Surname"]
-
-        row_data_transfer = update_data
-
-        data_transfer = pandas.DataFrame(row_data_transfer, columns= header_transfer)
-        data_transfer.to_csv('DataTransfer.csv', index = False)
+    "PANDAS CODE"
         
-        import pandas as pd
+    import pandas as pd
 
-        data1 = {
-            "Number": [NewNum],
-            "Forename": [NewForename],
-            "Surname": [NewSurname]
-        }
+    # The new row to be appended, is made into a small dataframe so it can be appended to another dataframe
+    new_row = pd.DataFrame([{
+        "Number": NewNum,
+        "Forename": NewForename,
+        "Surname": NewSurname
+    }])
 
-        dt1 = pd.DataFrame(data1)
-
-        NewData = update_data.append(dt1)
-
-        header = ["Number","Forename","Surname"]
-
-        row_data = NewData
-
-        data = pandas.DataFrame(row_data_transfer, columns= header)
-        data.to_csv('my_file.csv', index = False)
-
-        update_data = NewData
+    # Combining the new row and the existing data already read in to be a updated data frame that can be written to the file
+    update_data = pd.concat([read_data, new_row], ignore_index=True) # Appends the new_row data to the end of the read_data dataframe. Essentially like appending a list and a new value being added to the end
 
     return Number,Forename,Surname, update_data
 
 def updateFile(update_data):
 
+    "Writes the 'update_data' data frame to 'Contacts.csv'"
+
     import pandas
 
+    # File column headings
     header = ["Number","Forename","Surname"]
 
-    row_data = update_data
+    # Writing the file with appropiate layout and path
+    data = pandas.DataFrame(update_data, columns= header)
+    data.to_csv(('File/Contacts.csv'), index = False)
 
-    data = pandas.DataFrame(row_data, columns= header)
-    data.to_csv('my_file.csv', index = False)
-
-def displaylist(Number,Forename,Surname):
-
-    pos = 0
-
-    for value in Number:
-
-        print(Forename[pos])
-        print(Surname[pos])
-        print(Number[pos])
-        print("--------------")
-
-        pos += 1
+def displaylist(read_data):
+    "Prints the data frame created in the readfile function"
+    print(read_data)
 
 
-#---- Main System ----#
+"---- Main System ----"
 
-Number, Forename, Surname, update_data = readfile() 
+acc_val_foryes, acc_val_forno, acc_val_addcon, acc_val_dis = inputvalidation() # Activates the input validation procedure so the lists are available
 
-Con = True
+Con = True # Sets Continue to true so the program actually runs
 
-while Con == True:
+while Con == True: # Program runs while the user chooses too
 
-    Dec = input(print("Input an option from the list: 'Add Contact', 'Display' "))
+    Dec = input("Input an option from the list: 'Add Contact', 'Display': ").strip().lower() # strip and lower validate the text
 
-    if Dec == "Add Contact":
+    while Dec not in acc_val_addcon or Dec not in acc_val_dis: # Loops while the decision is not valid
 
-        Number, Forename, Surname, update_data = addcontact(Number, Forename, Surname, update_data) 
-        updateFile(update_data) 
+        if Dec in acc_val_addcon: # If Add Contact == to a string in the accepted Add Contact items list
 
-    elif Dec == "Display":
+            Number, Forename, Surname, read_data = readfile() # Activates the readfile function to read the 'Contacts.csv' file
+            Number, Forename, Surname, update_data = addcontact(Number, Forename, Surname, read_data) # Activates the 'addcontact' function so the user can add a new contact
+            updateFile(update_data) # Activates the update File function
+            break
 
-        displaylist(Number,Forename,Surname)
+        elif Dec in acc_val_dis: # If Decision == to a string in the accepted Display items list
 
-    Awn = input(print("Do you wish to continue?"))
+            Number, Forename, Surname, read_data = readfile() # Activates the readfile function to read the 'Contacts.csv' file
+            displaylist(read_data) # Activates the displaylist procedure to display the read-in data
+            break 
 
-    if Awn == "Yes":
+        else: # Repeats the input till an appropiate value is received
 
-        Con = True
+            Dec = input("Re-Input an option from the list: 'Add Contact', 'Display': ").strip().lower()
 
-    else:
-        
-        Con = False
-        print("Goodbye!")
+    Awn = input("Do you wish to continue?: ").strip().lower() # Finding out if the user wants to quit the program or not
+
+    while Awn not in acc_val_foryes or Awn not in acc_val_forno: # Loops while the Continue is not valid
+
+        if Awn in acc_val_foryes: # Repeats the program so the user can either add another contact, delete one, etc
+            Con = True
+            break
+
+        elif Awn in acc_val_forno: # Quits the program
+            Con = False
+            break
+
+        else: # Repeats the input till an appropiate value is received
+            Awn = input("Please enter a valid operator(Eg, 'Y' or 'N'): ").strip().lower()
