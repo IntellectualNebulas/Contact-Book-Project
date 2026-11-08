@@ -3,7 +3,7 @@ from pathlib import Path # Used for file path
 
 # Directory for the main file
 BASE_DIR = Path(__file__).resolve().parent
-FILE_PATH = "File/Contacts.csv"
+FILE_PATH = "src/Contacts.csv"
 
 def inputvalidation():
 
@@ -15,9 +15,10 @@ def inputvalidation():
 
     "Lists used for 'Awn'"
     acc_val_addcon = ["add contact","add","a"]
+    acc_val_delcon = ["delete contact", "delete", "remove", "r","bin","del"]
     acc_val_dis = ["display","d"]
 
-    return acc_val_foryes, acc_val_forno, acc_val_addcon, acc_val_dis
+    return acc_val_foryes, acc_val_forno, acc_val_addcon, acc_val_dis, acc_val_delcon
 
 def readfile():
 
@@ -42,9 +43,31 @@ def readfile():
         file.close()
 
         # Collecting data for the file update using pandas
-        read_data = pd.read_csv('File/Contacts.csv')
+        read_data = pd.read_csv('src/Contacts.csv')
+
+        print(read_data)
 
     return Number,Forename,Surname, read_data
+
+def deletecontact(Number,read_data):
+
+    import pandas as pd
+
+    "Deletes a value from the list"
+
+    "Local Variables"
+
+    length = len(read_data) # Gets length of list (didnt work in loop for some reason)
+    position = 0
+    Deleted_value = input("Enter the phone number of the contact you want deleted: ") # Getting the number of the contact being removed, basically a Primary Key
+
+    for i in range(length): # For Loop
+
+        if Number[i] == Deleted_value: # If the phone number = deleted valud
+            position = i # Saving the position of the removed number
+            update_data = read_data.drop(position) # New Data Table is the old data table with the indexed row removed
+
+    return update_data
 
 def addcontact(Number,Forename,Surname,read_data):
 
@@ -103,7 +126,7 @@ def updateFile(update_data):
 
     # Writing the file with appropiate layout and path
     data = pandas.DataFrame(update_data, columns= header)
-    data.to_csv(('File/Contacts.csv'), index = False)
+    data.to_csv(('src/Contacts.csv'), index = False)
 
 def displaylist(read_data):
     "Prints the data frame created in the readfile function"
@@ -112,15 +135,15 @@ def displaylist(read_data):
 
 "---- Main System ----"
 
-acc_val_foryes, acc_val_forno, acc_val_addcon, acc_val_dis = inputvalidation() # Activates the input validation procedure so the lists are available
+acc_val_foryes, acc_val_forno, acc_val_addcon, acc_val_dis,acc_val_delcon = inputvalidation() # Activates the input validation procedure so the lists are available
 
 Con = True # Sets Continue to true so the program actually runs
 
 while Con == True: # Program runs while the user chooses too
 
-    Dec = input("Input an option from the list: 'Add Contact', 'Display': ").strip().lower() # strip and lower validate the text
+    Dec = input("Input an option from the list: 'Add Contact', 'Delete Contact', 'Display': ").strip().lower() # strip and lower validate the text
 
-    while Dec not in acc_val_addcon or Dec not in acc_val_dis: # Loops while the decision is not valid
+    while Dec not in acc_val_addcon or Dec not in acc_val_dis or Dec not in acc_val_delcon: # Loops while the decision is not valid
 
         if Dec in acc_val_addcon: # If Add Contact == to a string in the accepted Add Contact items list
 
@@ -129,15 +152,22 @@ while Con == True: # Program runs while the user chooses too
             updateFile(update_data) # Activates the update File function
             break
 
-        elif Dec in acc_val_dis: # If Decision == to a string in the accepted Display items list
+        elif Dec in acc_val_dis: # If Decision == to a string in the accepted Display data list
 
             Number, Forename, Surname, read_data = readfile() # Activates the readfile function to read the 'Contacts.csv' file
             displaylist(read_data) # Activates the displaylist procedure to display the read-in data
             break 
 
+        elif Dec in acc_val_delcon: # If Decision == to a string in the accepted Delete Contact list
+
+            Number, Forename, Surname, read_data = readfile() # Activates the readfile function to read the 'Contacts.csv' file
+            update_data = deletecontact(Number,read_data) # Activates the displaylist procedure to display the read-in data
+            updateFile(update_data)
+            break 
+
         else: # Repeats the input till an appropiate value is received
 
-            Dec = input("Re-Input an option from the list: 'Add Contact', 'Display': ").strip().lower()
+            Dec = input("Input an option from the list: 'Add Contact', 'Delete Contact', 'Display': ").strip().lower()
 
     Awn = input("Do you wish to continue?: ").strip().lower() # Finding out if the user wants to quit the program or not
 
