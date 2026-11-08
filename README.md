@@ -7,6 +7,8 @@ Python3 & Pandas
 
 ## How to run
 
+## LINUX BASH
+
 **Get the File Path**:
 
 ```
@@ -23,6 +25,32 @@ python3 -m venv [The Virtual Environment name]
 
 ```
 source venv [The Virtual Environment name]
+```
+
+**Install Pandas**:
+
+```
+pip install pandas
+```
+
+## LINUX FISH
+
+**Get the File Path**:
+
+```
+cd [The file path]
+```
+
+**Create a Virtual Environment**:
+
+```
+python3 -m venv [The Virtual Environment name]
+```
+
+**Activate the Virtual Environment:**
+
+```
+source venv [The Virtual Environment name].fish
 ```
 
 **Install Pandas**:
