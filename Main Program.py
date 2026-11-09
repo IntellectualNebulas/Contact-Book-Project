@@ -9,16 +9,16 @@ def inputvalidation():
 
     "All the lists used for input validation"
 
-    "Lists used for 'Con'"
-    acc_val_foryes = ["yes","y","yeah","yea"]
-    acc_val_forno = ["no","n","nope","nah"]
+    #Lists used for 'Continue'
+    AcceptedYes = ["yes","y","yeah","yea"]
+    AcceptedNo = ["no","n","nope","nah"]
 
-    "Lists used for 'Awn'"
-    acc_val_addcon = ["add contact","add","a"]
-    acc_val_delcon = ["delete contact", "delete", "remove", "r","bin","del"]
-    acc_val_dis = ["display","d"]
+    #Lists used for 'UserInputContinue'
+    AddContactList = ["add contact","add","a"]
+    DeleteContactList = ["delete contact", "delete", "remove","bin","del","r"]
+    DisplayList = ["display", "view","d","v"]
 
-    return acc_val_foryes, acc_val_forno, acc_val_addcon, acc_val_dis, acc_val_delcon
+    return AcceptedYes, AcceptedNo, AddContactList, DisplayList, DeleteContactList
 
 def readfile():
 
@@ -45,8 +45,6 @@ def readfile():
         # Collecting data for the file update using pandas
         read_data = pd.read_csv('src/Contacts.csv')
 
-        print(read_data)
-
     return Number,Forename,Surname, read_data
 
 def deletecontact(Number,read_data):
@@ -59,13 +57,25 @@ def deletecontact(Number,read_data):
 
     length = len(read_data) # Gets length of list (didnt work in loop for some reason)
     position = 0
+    found = False
+
     Deleted_value = input("Enter the phone number of the contact you want deleted: ") # Getting the number of the contact being removed, basically a Primary Key
 
-    for i in range(length): # For Loop
+    while found == False:
 
-        if Number[i] == Deleted_value: # If the phone number = deleted valud
-            position = i # Saving the position of the removed number
-            update_data = read_data.drop(position) # New Data Table is the old data table with the indexed row removed
+        for i in range(length): # For Loop
+
+            if Number[i] == Deleted_value: # If the phone number = deleted valud
+                position = i # Saving the position of the removed number
+                update_data = read_data.drop(position) # New Data Table is the old data table with the indexed row removed
+                found = True
+                break
+                
+            else:
+                found = False
+
+        if found == False:
+            Deleted_value = input("Enter the phone number of the contact you want deleted: ") # Input Validating the number entered
 
     return update_data
 
@@ -129,57 +139,58 @@ def updateFile(update_data):
     data.to_csv(('src/Contacts.csv'), index = False)
 
 def displaylist(read_data):
+
     "Prints the data frame created in the readfile function"
     print(read_data)
 
 
 "---- Main System ----"
 
-acc_val_foryes, acc_val_forno, acc_val_addcon, acc_val_dis,acc_val_delcon = inputvalidation() # Activates the input validation procedure so the lists are available
+AcceptedYes, AcceptedNo, AddContactList, DisplayList, DeleteContactList = inputvalidation() # Activates the input validation procedure so the lists are available
 
-Con = True # Sets Continue to true so the program actually runs
+Continue = True # Sets Continue to true so the program actually runs
 
-while Con == True: # Program runs while the user chooses too
+while Continue == True: # Program runs while the user chooses too
 
-    Dec = input("Input an option from the list: 'Add Contact', 'Delete Contact', 'Display': ").strip().lower() # strip and lower validate the text
+    UserDescison = input("Input an option from the list: 'Add Contact', 'Delete Contact', 'Display': ").strip().lower() # strip and lower validate the text
 
-    while Dec not in acc_val_addcon or Dec not in acc_val_dis or Dec not in acc_val_delcon: # Loops while the decision is not valid
+    while UserDescison not in AddContactList or UserDescison not in DeleteContactList or UserDescison not in DisplayList: # Loops while the decision is not valid
 
-        if Dec in acc_val_addcon: # If Add Contact == to a string in the accepted Add Contact items list
+        if UserDescison in AddContactList: # If Add Contact == to a string in the accepted Add Contact items list
 
             Number, Forename, Surname, read_data = readfile() # Activates the readfile function to read the 'Contacts.csv' file
             Number, Forename, Surname, update_data = addcontact(Number, Forename, Surname, read_data) # Activates the 'addcontact' function so the user can add a new contact
             updateFile(update_data) # Activates the update File function
             break
 
-        elif Dec in acc_val_dis: # If Decision == to a string in the accepted Display data list
+        elif UserDescison in DeleteContactList: # If Decision == to a string in the accepted Delete Contact list
 
             Number, Forename, Surname, read_data = readfile() # Activates the readfile function to read the 'Contacts.csv' file
-            displaylist(read_data) # Activates the displaylist procedure to display the read-in data
-            break 
-
-        elif Dec in acc_val_delcon: # If Decision == to a string in the accepted Delete Contact list
-
-            Number, Forename, Surname, read_data = readfile() # Activates the readfile function to read the 'Contacts.csv' file
-            update_data = deletecontact(Number,read_data) # Activates the displaylist procedure to display the read-in data
+            update_data = deletecontact(Number,read_data) # Activates the 'DeleteFile' function to delete a chosen contact
             updateFile(update_data)
             break 
 
-        else: # Repeats the input till an appropiate value is received
+        elif UserDescison in DisplayList: # If Decision == to a string in the accepted Display data list
 
-            Dec = input("Input an option from the list: 'Add Contact', 'Delete Contact', 'Display': ").strip().lower()
-
-    Awn = input("Do you wish to continue?: ").strip().lower() # Finding out if the user wants to quit the program or not
-
-    while Awn not in acc_val_foryes or Awn not in acc_val_forno: # Loops while the Continue is not valid
-
-        if Awn in acc_val_foryes: # Repeats the program so the user can either add another contact, delete one, etc
-            Con = True
-            break
-
-        elif Awn in acc_val_forno: # Quits the program
-            Con = False
-            break
+            Number, Forename, Surname, read_data = readfile() # Activates the readfile function to read the 'Contacts.csv' file
+            displaylist(read_data) # Activates the 'displaylist' procedure to display the read-in data
+            break 
 
         else: # Repeats the input till an appropiate value is received
-            Awn = input("Please enter a valid operator(Eg, 'Y' or 'N'): ").strip().lower()
+
+            UserDescison = input("Input an option from the list: 'Add Contact', 'Delete Contact', 'Display': ").strip().lower()
+
+    UserInputContinue = input("Do you wish to continue?: ").strip().lower() # Finding out if the user wants to quit the program or not
+
+    while UserInputContinue not in AcceptedYes or UserInputContinue not in AcceptedNo: # Loops while the Continue is not valid
+
+        if UserInputContinue in AcceptedYes: # Repeats the program so the user can either add another contact, delete one, etc
+            Continue = True
+            break
+
+        elif UserInputContinue in AcceptedNo: # Quits the program
+            Continue = False
+            break
+
+        else: # Repeats the input till an appropiate value is received
+            UserInputContinue = input("Please enter a valid operator(Eg, 'Y' or 'N'): ").strip().lower()
