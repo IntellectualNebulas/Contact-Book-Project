@@ -44,13 +44,13 @@ cd [The file path]
 **Create a Virtual Environment**:
 
 ```
-python3 -m  [The Virtual Environment name]/bin.activate.fish
+python3 -m venv [The Virtual Environment name]
 ```
 
 **Activate the Virtual Environment:**
 
 ```
-source venv [The Virtual Environment name].fish
+source [The Virtual Environment name]/bin/activate.fish
 ```
 
 **Install Pandas**:
